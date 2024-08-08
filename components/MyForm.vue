@@ -34,10 +34,12 @@
       />
       <div>
         <button
+          :disabled="isLoading"
           type="submit"
           class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          Submit
+          <span v-if="isLoading">Loading...</span>
+          <span v-else>Submit</span>
         </button>
       </div>
     </form>
@@ -59,6 +61,7 @@ export default {
         password: '',
         confirmPassword: '',
       },
+      isLoading: false,
       errors: {},
     };
   },
@@ -106,6 +109,8 @@ export default {
 
       if (!this.errors.name && !this.errors.email && !this.errors.password && !this.errors.confirmPassword) {
         try {
+          this.isLoading = true;
+          console.log(this.isLoading);
           const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
             method: 'POST',
             headers: {
@@ -114,7 +119,6 @@ export default {
             body: JSON.stringify(this.form),
           });
           const data = await response.json();
-          console.log('API Response:', data);
           this.resetForm();
         } catch (error) {
           console.error('Error calling API:', error);
@@ -126,6 +130,7 @@ export default {
       this.form.email = '';
       this.form.password = '';
       this.form.confirmPassword = '';
+      this.isLoading = false;
       this.errors = {};
     },
   },
